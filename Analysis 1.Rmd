@@ -1,3 +1,11 @@
+---
+title: "Party in Power Analyses 1"
+author: "Tyler Leigh"
+date: "2/15/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
 ####Libraries####
 library(easypackages)
 libs<-c("haven", "tidyverse", "car", "labelled", "psych", "naniar", "plm")
@@ -5,7 +13,6 @@ libraries(libs)
 ####Read in the Data####
 dat <- readRDS("~/Desktop/R Programs/Research--Diana/party-in-power/Data/Amerispeak/waves1234all.rds")
 ####Cleaning####
-
 # Keep only panelists
 dat$long<-NA
 for(x in 1:nrow(dat)){
@@ -16,7 +23,8 @@ for(x in 1:nrow(dat)){
 dat.p<-dat[dat$long==1,]
 #####Recodes####
 
-#Make Party3 constant across waves
+#Make party3 constant
+
 dat.p$party3r_1<-dat.p$party3_1
 dat.p$party3r_2<-dat.p$party3_1
 dat.p$party3r_3<-dat.p$party3_1
@@ -87,7 +95,7 @@ dat.p$sd2r_4<-dat.p$SD2_W4
 dat.p$sd4r_1<-dat.p$SD4_W1
 dat.p$sd4r_4<-dat.p$SD4_W4
 
-# SL4
+#SL4
 dat.p$sl4r_1<-dat.p$SL4_W1
 dat.p$sl4r_2<-dat.p$SL4_W2
 dat.p$sl4r_3<-dat.p$SL4_W3
@@ -121,7 +129,9 @@ index.names<-colnames(dat.long)[-c(1, 2, 3)]
 # Make wave and party factors
 dat.long$party3r<-factor(dat.long$party3r)
 dat.long$wave<-factor(dat.long$wave)
+```
 
+```{r echo=F}
 # Set up loop 
 for(x in 1:length(index.names)){
   txt<-paste("model<-summary(plm(formula=", index.names[x], "~wave+party3r*wave, data=dat.long, model='within', index='CaseId', type='individual'))", sep="")
@@ -130,8 +140,4 @@ for(x in 1:length(index.names)){
   print(model)
   cat("\n")
 }
-
-
-
-
 
