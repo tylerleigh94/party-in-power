@@ -1,3 +1,11 @@
+---
+title: "2012 PiP Analyses 1"
+author: "Tyler Leigh"
+date: "2/20/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
 ####Libraries####
 library(easypackages)
 libs<-c("haven", "tidyverse", "car", "labelled", "psych", "naniar", "plm")
@@ -165,7 +173,9 @@ index.names<-colnames(dat.l[,index.s])
 # Make wave and party factors
 dat.l$party3.s<-factor(dat.l$party3.s)
 dat.l$wave.s<-factor(dat.l$wave.s)
+```
 
+```{r, echo=F, message=F}
 # Set up loop 
 for(x in 1:length(index.names)){
   txt<-paste("model<-summary(plm(formula=", index.names[x], "~wave.s+party3.s*wave.s, data=dat.l, model='within', index='MNO.s', type='individual'))", sep="")
@@ -174,8 +184,5 @@ for(x in 1:length(index.names)){
   print(model)
   cat("\n")
 }
-
-
-
-
+```
 
