@@ -123,15 +123,32 @@ dat.long$party3r<-factor(dat.long$party3r)
 dat.long$wave<-factor(dat.long$wave)
 
 # Set up loop 
+out.16<-matrix(NA, ncol=3, nrow=length(index.names))
+colnames(out.16)<-c("var", "est_16", "sig_16")
 for(x in 1:length(index.names)){
   txt<-paste("model<-summary(plm(formula=", index.names[x], "~wave+party3r*wave, data=dat.long, model='within', index='CaseId', type='individual'))", sep="")
   eval(parse(text=txt))
   cat("-------------", "\n", "\n", paste("DV = ", index.names[x], sep=""), "\n", "\n")
   print(model)
   cat("\n")
+  out.16[x,1]<-index.names[x]
+  out.16[x,2]<-model$coefficients[3,1]
+  out.16[x,3]<-model$coefficients[3,4]
 }
 
 
 
 
 
+
+####Combine all three elections of data####
+#Make dataframes
+out.08 <- data.frame(out.08)
+out.12 <- data.frame(out.12)
+out.16 <- data.frame(out.16)
+out.08.12 <- out.08 %>%
+  full_join(out.12, by='var')
+
+out.all <- out.08.12 %>%
+  full_join(out.16, by='var')
+write_csv(out.all, "Party In Power Effects.csv")

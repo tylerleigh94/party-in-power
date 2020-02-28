@@ -53,8 +53,8 @@ dat.l<-dat.p %>%
 
 ####Cleaning and Recodes####
 
-# Party3
-dat.l$party3<-car::recode(dat.l$party3, "3=0; 2=.5; 1=1")
+# Party3 (Democrat = 1; Independent = .5; Republican = 0 so that Reps are the reference group in analyses)
+dat.l$party3<-car::recode(dat.l$party3, "3=1; 2=.5; 1=0")
 
 # POS7 
 dat.l$POS7.r<- car::recode(dat.l$POS7, "1=3; 2=2; 3=1; 4=0")
@@ -167,12 +167,17 @@ dat.l$party3.s<-factor(dat.l$party3.s)
 dat.l$wave.s<-factor(dat.l$wave.s)
 
 # Set up loop 
+out.12<-matrix(NA, ncol=3, nrow=length(index.names))
+colnames(out.12)<-c("var", "est_12", "sig_12")
 for(x in 1:length(index.names)){
   txt<-paste("model<-summary(plm(formula=", index.names[x], "~wave.s+party3.s*wave.s, data=dat.l, model='within', index='MNO.s', type='individual'))", sep="")
   eval(parse(text=txt))
   cat("-------------", "\n", "\n", paste("DV = ", index.names[x], sep=""), "\n", "\n")
   print(model)
   cat("\n")
+  out.12[x,1]<-index.names[x]
+  out.12[x,2]<-model$coefficients[3,1]
+  out.12[x,3]<-model$coefficients[3,4]
 }
 
 
